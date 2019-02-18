@@ -83,6 +83,11 @@ class Answer {
         self.userID = userID
         self.username = username
         self.userRole = userRole
+        
+        // For normal user, usAudio == nil
+        if self.usAudio == nil {
+            self.usAudio = self.ukAudio
+        }
     }
     
     convenience init?(fromJson json: [String: Any]) {

@@ -52,21 +52,6 @@ class AnswerDetailViewController: UIViewController {
     var audioRecorder: AVAudioRecorder!
     var audioPlayer: AVAudioPlayer!
     
-    // button
-    lazy var cmtBtn: UIButton = {
-        let minimumTappableHeight: CGFloat = 60
-        let button = UIButton(frame: CGRect(x: self.view.bounds.width - minimumTappableHeight, y: self.view.center.y,
-                                            width: minimumTappableHeight,
-                                            height: minimumTappableHeight))
-        button.layer.cornerRadius = minimumTappableHeight / 2
-        button.layer.masksToBounds = true
-        button.setBackgroundImage(#imageLiteral(resourceName: "comment_btn"), for: .normal)
-        
-        return button
-    }()
-    var center: CGPoint!
-    let threshold: CGFloat = 20.0
-    
     // init
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -308,33 +293,6 @@ extension AnswerDetailViewController: PostTextViewDelegate {
         view.bringSubview(toFront: postTextView)
         postTextView.delegate = self
         postTextView.isHidden = true
-        
-        view.addSubview(cmtBtn)
-        cmtBtn.addTarget(self, action: #selector(cmtBtnDragged(control:event:)), for: .touchDragInside)
-        cmtBtn.addTarget(self, action: #selector(cmtBtnDragged(control:event:)), for: [.touchDragExit, .touchDragOutside])
-        cmtBtn.addTarget(self, action: #selector(cmtBtnTapped(_:)), for: .touchUpInside)
-        cmtBtn.addTarget(self, action: #selector(cmtBtnTouchedDown(_:)), for: .touchDown)
-        cmtBtn.isHidden = true
-    }
-    
-    func cmtBtnDragged(control: UIControl, event: UIEvent) {
-        if let center = event.allTouches?.first?.location(in: self.view) {
-            control.center = center
-        }
-    }
-    
-    func cmtBtnTouchedDown(_ sender: UIButton) {
-        center = cmtBtn.center
-    }
-    
-    func distanceBetweenPoints(_ p1: CGPoint, p2: CGPoint) -> CGFloat {
-        return sqrt((pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2)))
-    }
-    
-    func cmtBtnTapped(_ sender: UIButton) {
-        if distanceBetweenPoints(cmtBtn.center, p2: center) > threshold { return }
-        cmtBtn.fadeOut(withDuration: Duration.AnswerDetailVC.fadeInOrOutDuration, withCompletionBlock: nil)
-        postTextView.fadeIn(withDuration: Duration.AnswerDetailVC.fadeInOrOutDuration, withCompletionBlock: nil)
     }
     
     func addPostTextViewConstraints() {
@@ -478,7 +436,7 @@ extension AnswerDetailViewController: UITableViewDelegate, UITableViewDataSource
                     cell = tableView.dequeueReusableCell(withIdentifier: ReuseIDs.TopicDetailVC.View.answerDefaultCell, for: indexPath) as! AnswerDetailTableViewCell
                 }
                 cell.mode = .full
-                cell.canAudioToggle = answer.ukAudio != nil
+                cell.canAudioToggle = answer.userID == 1 // only TFT can audio toggle (US/UK)
                 cell.answer = answer
                 cell.audioToggle.addTarget(self, action: #selector(self.audioToggleValueChanged(_:)), for: .valueChanged)
                 let img = Utils.doesCurrentUserLikeThisAnswer(answer) ? #imageLiteral(resourceName: "like_btn-fill") : #imageLiteral(resourceName: "like_btn")

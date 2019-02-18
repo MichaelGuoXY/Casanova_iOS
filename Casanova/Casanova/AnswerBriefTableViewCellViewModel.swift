@@ -61,7 +61,6 @@ class AnswerBriefTableViewCellViewModel {
     }
     
     var clapsText: String {
-        // TODO: Use count of likes for now, replace with num of claps later
         return "\(answer.likesNum) 鼓掌"
     }
     

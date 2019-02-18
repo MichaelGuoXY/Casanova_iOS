@@ -236,6 +236,7 @@ class TopicDetailViewController: UIViewController {
         }
         viewModel.showTopicOnly = flag
         tableView.reloadData()
+        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
     }
 }
 
